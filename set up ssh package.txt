@@ -1,0 +1,32 @@
+C:\Projects\python\ssh-command>python -m pip install paramiko
+
+ssh shaomin:abcd@192.168.1.66
+scp nonstop.py shaomin@192.168.1.66:/home/shaomin
+pkill -f nonstop.py
+ 
+1. paramiko thread safety: may be not thread safe: https://bugs.launchpad.net/ubuntu/+source/paramiko/+bug/725237
+    from paramiko import SSHClient, AutoAddPolicy
+    from concurrent.futures import ThreadPoolExecutor
+    from typing import List
+     
+    def dowload(files: List[str]) -> None:
+        client = SSHClient()
+        client.set_missing_host_key_policy(AutoAddPolicy()) 
+        client.connect(username=.., ..)
+        sftp = client.open_sftp()
+        with ThreadPoolExecutor(10) as pool:
+            pool.map(lambda fn: sftp.get(fn, fn), files)
+            
+            
+    ssh = paramiko.SSHClient()
+    ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+    try:
+        ssh.connect(ipaddress,username=user,password=passwd)
+    except paramiko.AuthenticationException:
+        print "[-] Authentication Exception! ..."      
+         
+    except paramiko.SSHException:
+        print "[-] SSH Exception! ..."            
+        
+2. start a service on  remote host: https://github.com/paramiko/paramiko/issues/501
+        
